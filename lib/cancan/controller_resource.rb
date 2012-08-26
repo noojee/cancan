@@ -74,7 +74,11 @@ module CanCan
     end
 
     def load_collection?
-      resource_base.respond_to?(:accessible_by) && !current_ability.has_block?(authorization_action, resource_class)
+      if resource_base.respond_to? :proxy_association
+        resource_base.proxy_association.klass.respond_to?(:accessible_by) && !current_ability.has_block?(authorization_action, resource_class)
+      else
+        resource_base.respond_to?(:accessible_by) && !current_ability.has_block?(authorization_action, resource_class)
+      end
     end
 
     def load_collection
